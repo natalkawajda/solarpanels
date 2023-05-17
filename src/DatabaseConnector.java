@@ -19,15 +19,24 @@ public class DatabaseConnector
       exception.printStackTrace();
     }
   }
-  public void UpdateManufacturersName(String name){
-    String sql = "UPDATE solarpanels.manufacturer SET phone = '" + name + "' WHERE manufacturer_ID = 1;";
+  public void UpdateManufacturersName(String newName){
+    String sql = "UPDATE solarpanels.manufacturer SET name = ? WHERE manufacturer_id = 1;";
 
     try {
-      Statement statement = connection.createStatement();
-      statement.execute(sql);
+      PreparedStatement statement = connection.prepareStatement(sql);
+      statement.setString(1,newName);
+      int rowsUpdated = statement.executeUpdate();
+      if (rowsUpdated > 0) {
+        System.out.println("Manufacturer name updated successfully.");
+      } else {
+        System.out.println("No manufacturer found with the specified ID.");
+      }
+      statement.close();
+      connection.close();
     } catch (SQLException e) {
       System.out.println("Error trying to update Manufacturer table");
       e.printStackTrace();
     }
+
   }
 }
