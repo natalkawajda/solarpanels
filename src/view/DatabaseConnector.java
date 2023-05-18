@@ -29,14 +29,14 @@ public class DatabaseConnector
       statement.setString(1,newName);
       int rowsUpdated = statement.executeUpdate();
       if (rowsUpdated > 0) {
-        System.out.println("Manufacturer name updated successfully.");
+        System.out.println("model.Manufacturer name updated successfully.");
       } else {
         System.out.println("No manufacturer found with the specified ID.");
       }
       statement.close();
       connection.close();
     } catch (SQLException e) {
-      System.out.println("Error trying to update Manufacturer table");
+      System.out.println("Error trying to update model.Manufacturer table");
       e.printStackTrace();
     }
 
