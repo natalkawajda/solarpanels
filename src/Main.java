@@ -9,7 +9,7 @@ public class Main extends Application {
   public void start (Stage primaryStage)
   {
     connection = new DatabaseConnector();
-    connection.connect("localhost", 5433, "postgres", "1234");
+    connection.connect("localhost", 5432, "postgres", "Olszyna12");
     viewHandler = new ViewHandler(primaryStage, connection);
   }
 

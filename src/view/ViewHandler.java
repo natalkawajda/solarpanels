@@ -16,6 +16,7 @@ public class ViewHandler {
     public ViewHandler (Stage primaryStage,DatabaseConnector connection){
         this.primaryStage = primaryStage;
         this.connection = connection;
+
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("MainPage.fxml"));
         try
@@ -30,5 +31,9 @@ public class ViewHandler {
             System.exit(1);
         }
 
+    }
+    public DatabaseConnector getConnection()
+    {
+        return connection;
     }
 }

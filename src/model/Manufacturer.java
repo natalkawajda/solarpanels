@@ -1,10 +1,19 @@
-public class Manufacturer {
+package model;
 
+public class Manufacturer {
+  private int id;
   private String name;
   private String country;
   private String phone;
   private String email;
 
+  public Manufacturer(int id,String name, String country, String phone, String email){
+    this.id = id;
+    this.name = name;
+    this.country = country;
+    this.phone = phone;
+    this.email = email;
+  }
   public Manufacturer(String name, String country, String phone, String email){
     this.name = name;
     this.country = country;
