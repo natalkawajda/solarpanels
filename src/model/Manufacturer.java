@@ -20,7 +20,6 @@ public class Manufacturer {
     this.phone = phone;
     this.email = email;
   }
-
   public String getName()
   {
     return name;

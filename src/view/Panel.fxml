@@ -61,6 +61,7 @@
                 </TableView>
             </children>
         </AnchorPane>
+      <Button mnemonicParsing="false" onAction="#handleLocation" text="Location" />
         <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleMainLoad" prefHeight="25.0" text="Go back" />
     </children>
 </VBox>

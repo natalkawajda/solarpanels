@@ -23,6 +23,16 @@ public class PVPanels
     this.power_out = power_out;
     this.efficiency = efficiency;
   }
+  public PVPanels(Date date, Time time, int panel_id, float voltage, float current, int solar_flux, float power_out, float efficiency){
+    this.date = date;
+    this.time = time;
+    this.panel_id = panel_id;
+    this.voltage = voltage;
+    this.current = current;
+    this.solar_flux = solar_flux;
+    this.power_out = power_out;
+    this.efficiency = efficiency;
+  }
 
   public Date getDate()
   {

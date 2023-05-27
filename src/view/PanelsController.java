@@ -43,4 +43,7 @@ public class PanelsController {
     public void handleMainLoad(ActionEvent e) {
         viewHandler.changeScene(ViewHandler.MAIN_PAGE_SCENE);
     }
+    public void handleLocation(ActionEvent e) {
+        viewHandler.changeScene(ViewHandler.LOCATION);
+    }
 }

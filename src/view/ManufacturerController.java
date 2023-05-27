@@ -2,14 +2,17 @@ package view;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.TextInputDialog;
 
 import javax.swing.*;
 
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import model.Manufacturer;
 
 import java.io.IOException;
@@ -48,102 +51,178 @@ public class ManufacturerController {
         viewHandler.changeScene(ViewHandler.MAIN_PAGE_SCENE);
     }
     public void handleChangeName(ActionEvent e) {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Manufacturer ID");
-        dialog.setHeaderText("Type the ID of manufacturer you want to change name");
-        dialog.setContentText("ID:");
-        dialog.showAndWait();
-        int input = Integer.parseInt(String.valueOf(dialog.getEditor().getText()));
-        TextInputDialog dialog1 = new TextInputDialog();
-        dialog1.setTitle("Change name");
-        dialog1.setHeaderText("Type the new name of manufacturer:");
-        dialog1.setContentText("Change name");
-        dialog1.showAndWait();
-        String name = String.valueOf(dialog1.getEditor().getText());
-        viewHandler.getConnection().UpdateManufacturersName(name, input);
-        viewHandler.changeScene(ViewHandler.MANUFACTURER);
+        try{
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Manufacturer ID");
+            dialog.setHeaderText("Type the ID of manufacturer you want to change name");
+            dialog.setContentText("ID:");
+            dialog.showAndWait();
+            int input = Integer.parseInt(String.valueOf(dialog.getEditor().getText()));
+            TextInputDialog dialog1 = new TextInputDialog();
+            dialog1.setTitle("Change name");
+            dialog1.setHeaderText("Type the new name of manufacturer:");
+            dialog1.setContentText("Change name:");
+            dialog1.showAndWait();
+            String name = String.valueOf(dialog1.getEditor().getText());
+            if (name.equalsIgnoreCase(""))
+            {
+                throw new Exception("You have to enter a name");
+            }
+            if (input == 0)
+            {
+                throw new Exception("ID = 0 does not exist");
+            }
+            viewHandler.getConnection().UpdateManufacturersName(name, input);
+            viewHandler.changeScene(ViewHandler.MANUFACTURER);
+        }catch (Exception l)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setAlertType(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Something went wrong");
+            alert.setContentText(l.getMessage());
+            alert.showAndWait();
+        }
+
+
     }
-    public void handleAddManufacturer(ActionEvent e){
-        String name = JOptionPane.showInputDialog(null, "Enter the name of the new manufacturer:", "Enter a name", JOptionPane.QUESTION_MESSAGE);
-        String country = JOptionPane.showInputDialog(null, "Enter the country of the new manufacturer:", "Enter country", JOptionPane.QUESTION_MESSAGE);
-        String phone = JOptionPane.showInputDialog(null, "Enter the phone number of the new manufacturer:", "Enter phone number", JOptionPane.QUESTION_MESSAGE);
-        String email = JOptionPane.showInputDialog(null, "Enter the e-mail of the new manufacturer:", "Enter e-mail", JOptionPane.QUESTION_MESSAGE);
-        Manufacturer manufacturer = new Manufacturer(name, country, phone, email);
-        viewHandler.getConnection().addManufacturer(manufacturer);
-        viewHandler.changeScene(ViewHandler.MANUFACTURER);
-    }
+
     public void handleChangeCountry(ActionEvent e) {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Manufacturer ID");
-        dialog.setHeaderText("Type the ID of manufacturer you want to change country");
-        dialog.setContentText("ID:");
-        dialog.showAndWait();
-        int input = Integer.parseInt(String.valueOf(dialog.getEditor().getText()));
-        TextInputDialog dialog1 = new TextInputDialog();
-        dialog1.setTitle("Change country");
-        dialog1.setHeaderText("Type the new country of manufacturer:");
-        dialog1.setContentText("Change country");
-        dialog1.showAndWait();
-        String country = String.valueOf(dialog1.getEditor().getText());
-        viewHandler.getConnection().UpdateManufacturersCountry(country, input);
-        viewHandler.changeScene(ViewHandler.MANUFACTURER);
+        try{
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Manufacturer ID");
+            dialog.setHeaderText("Type the ID of manufacturer you want to change country");
+            dialog.setContentText("ID:");
+            dialog.showAndWait();
+            int input = Integer.parseInt(String.valueOf(dialog.getEditor().getText()));
+            if (input < 1 || input > 4)
+            {
+                throw new Exception("Given ID does not exist");
+            }
+            TextInputDialog dialog1 = new TextInputDialog();
+            dialog1.setTitle("Change country");
+            dialog1.setHeaderText("Type the new country of manufacturer:");
+            dialog1.setContentText("Change country");
+            dialog1.showAndWait();
+            String country = String.valueOf(dialog1.getEditor().getText());
+            if(country.equalsIgnoreCase(""))
+            {
+                throw new Exception("You have to enter the name of the country");
+            }
+            viewHandler.getConnection().UpdateManufacturersCountry(country, input);
+            viewHandler.changeScene(ViewHandler.MANUFACTURER);
+        }catch (Exception l)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setAlertType(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Something went wrong");
+            alert.setContentText(l.getMessage());
+            alert.showAndWait();
+        }
+
     }
     public void handleChangePhone(ActionEvent e) {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Manufacturer ID");
-        dialog.setHeaderText("Type the ID of manufacturer you want to change phone number");
-        dialog.setContentText("ID:");
-        dialog.showAndWait();
-        int input1 = Integer.parseInt(String.valueOf(dialog.getEditor().getText()));
-        TextInputDialog dialog1 = new TextInputDialog();
-        dialog1.setTitle("Change phone number");
-        dialog1.setHeaderText("Type the new phone number of manufacturer:");
-        dialog1.setContentText("Phone number:");
-        dialog1.showAndWait();
-        String phone1 = String.valueOf(dialog1.getEditor().getText());
-        viewHandler.getConnection().UpdateManufacturersPhone(phone1, input1);
-        viewHandler.changeScene(ViewHandler.MANUFACTURER);
+        try{
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Manufacturer ID");
+            dialog.setHeaderText("Type the ID of manufacturer you want to change phone number");
+            dialog.setContentText("ID:");
+            dialog.showAndWait();
+            int input1 = Integer.parseInt(String.valueOf(dialog.getEditor().getText()));
+            if (input1 < 1 || input1 > 4)
+            {
+                throw new Exception("Given ID does not exist");
+            }
+            TextInputDialog dialog1 = new TextInputDialog();
+            dialog1.setTitle("Change phone number");
+            dialog1.setHeaderText("Type the new phone number of manufacturer:");
+            dialog1.setContentText("Phone number:");
+            dialog1.showAndWait();
+            String phone1 = String.valueOf(dialog1.getEditor().getText());
+            if (phone1.equalsIgnoreCase(""))
+            {
+                throw new Exception("You have to enter phone number");
+            }
+            viewHandler.getConnection().UpdateManufacturersPhone(phone1, input1);
+            viewHandler.changeScene(ViewHandler.MANUFACTURER);
+        }
+        catch (Exception l)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setAlertType(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Something went wrong");
+            alert.setContentText(l.getMessage());
+            alert.showAndWait();
+        }
+
     }
     public void handleChangeEmail(ActionEvent e) {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Manufacturer ID");
-        dialog.setHeaderText("Type the ID of manufacturer you want to change e-mail");
-        dialog.setContentText("ID:");
-        dialog.showAndWait();
-        int input = Integer.parseInt(String.valueOf(dialog.getEditor().getText()));
-        TextInputDialog dialog1 = new TextInputDialog();
-        dialog1.setTitle("Change e-mail");
-        dialog1.setHeaderText("Type the new e-mail of manufacturer:");
-        dialog1.setContentText("Change e-mail");
-        dialog1.showAndWait();
-        String email = String.valueOf(dialog1.getEditor().getText());
-        viewHandler.getConnection().UpdateManufacturersEmail(email, input);
-        viewHandler.changeScene(ViewHandler.MANUFACTURER);
-    }
-    public void handleDeleteManufacturer(ActionEvent e) {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Manufacturer ID");
-        dialog.setHeaderText("Type the ID of manufacturer you want to delete");
-        dialog.setContentText("ID:");
-        dialog.showAndWait();
-        int input = Integer.parseInt(String.valueOf(dialog.getEditor().getText()));
-        viewHandler.getConnection().deleteManufacturer(input);
-        viewHandler.changeScene(ViewHandler.MANUFACTURER);
-    }
-    public void handleSearchByID(ActionEvent e) {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Manufacturer's ID");
-        dialog.setHeaderText("Search by following ID:");
-        dialog.setContentText("ID value:");
-        dialog.showAndWait();
-        int input1 = Integer.parseInt(String.valueOf(dialog.getEditor().getText()));
-        this.id.setCellValueFactory(new PropertyValueFactory<>("id"));
-        name.setCellValueFactory(new PropertyValueFactory<>("name"));
-        country.setCellValueFactory(new PropertyValueFactory<>("country"));
-        phone.setCellValueFactory(new PropertyValueFactory<>("phone"));
-        email.setCellValueFactory(new PropertyValueFactory<>("email"));
+        try{
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Manufacturer ID");
+            dialog.setHeaderText("Type the ID of manufacturer you want to change e-mail");
+            dialog.setContentText("ID:");
+            dialog.showAndWait();
+            int input = Integer.parseInt(String.valueOf(dialog.getEditor().getText()));
+            if (input < 1 || input > 4)
+            {
+                throw new Exception("Given ID does not exist");
+            }
+            TextInputDialog dialog1 = new TextInputDialog();
+            dialog1.setTitle("Change e-mail");
+            dialog1.setHeaderText("Type the new e-mail of manufacturer:");
+            dialog1.setContentText("Change e-mail");
+            dialog1.showAndWait();
+            String email = String.valueOf(dialog1.getEditor().getText());
+            if (email.equalsIgnoreCase(""))
+            {
+                throw new Exception("You have to enter e-mail");
+            }
+            viewHandler.getConnection().UpdateManufacturersEmail(email, input);
+            viewHandler.changeScene(ViewHandler.MANUFACTURER);
+        }catch (Exception l)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setAlertType(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Something went wrong");
+            alert.setContentText(l.getMessage());
+            alert.showAndWait();
+        }
 
-        manufacturerTable.setItems(viewHandler.getConnection().searchByID(input1));
+    }
+
+    public void handleSearchByID(ActionEvent e) {
+        try{
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Manufacturer's ID");
+            dialog.setHeaderText("Search by following ID:");
+            dialog.setContentText("ID value:");
+            dialog.showAndWait();
+            int input1 = Integer.parseInt(String.valueOf(dialog.getEditor().getText()));
+            if (input1 < 1 || input1 > 4)
+            {
+                throw new Exception("Given ID does not exist");
+            }
+            this.id.setCellValueFactory(new PropertyValueFactory<>("id"));
+            name.setCellValueFactory(new PropertyValueFactory<>("name"));
+            country.setCellValueFactory(new PropertyValueFactory<>("country"));
+            phone.setCellValueFactory(new PropertyValueFactory<>("phone"));
+            email.setCellValueFactory(new PropertyValueFactory<>("email"));
+
+            manufacturerTable.setItems(viewHandler.getConnection().searchByID(input1));
+        }catch (Exception l)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setAlertType(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Something went wrong");
+            alert.setContentText(l.getMessage());
+            alert.showAndWait();
+        }
+
     }
     public void handleSearchByName(ActionEvent e) {
         TextInputDialog dialog = new TextInputDialog();

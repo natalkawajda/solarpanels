@@ -22,6 +22,15 @@ public class THPanels {
     this.water_out_temp = water_out_temp;
     this.efficiency = efficiency;
   }
+  public THPanels(Date date, Time time, int panel_id, float a_temperature, float water_in_temp, float water_out_temp, float efficiency){
+    this.date = date;
+    this.time = time;
+    this.panel_id = panel_id;
+    this.a_temperature = a_temperature;
+    this.water_in_temp = water_in_temp;
+    this.water_out_temp = water_out_temp;
+    this.efficiency = efficiency;
+  }
 
   public Date getDate() {
     return date;

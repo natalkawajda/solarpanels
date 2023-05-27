@@ -5,6 +5,9 @@ import javafx.collections.ObservableList;
 import model.*;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+
 public class DatabaseConnector
 {
   private Connection connection;
@@ -139,27 +142,7 @@ public class DatabaseConnector
 
     return result;
   }
-  public void addManufacturer(Manufacturer manufacturer)
-  {
-    String sql = "INSERT INTO solarpanels.Manufacturer(name, country, phone, email) VALUES(?, ?, ?, ?);";
 
-    try
-    {
-      PreparedStatement statement = connection.prepareStatement(sql);
-      statement.setString(1, manufacturer.getName());
-      statement.setString(2, manufacturer.getCountry());
-      statement.setString(3, manufacturer.getPhone());
-      statement.setString(4, manufacturer.getEmail());
-      statement.executeUpdate();
-      statement.close();
-//      connection.close();
-    }
-    catch (SQLException e)
-    {
-      System.out.println("Error trying to update model.Manufacturer table");
-      e.printStackTrace();
-    }
-  }
   public ObservableList<ManufacturerHistory> retrieveManufacturerHistory()
   {
     ObservableList<ManufacturerHistory> result = FXCollections.observableArrayList();
@@ -192,7 +175,7 @@ public class DatabaseConnector
       statement.setInt(2, id);
       int rowsUpdated = statement.executeUpdate();
       if (rowsUpdated > 0) {
-        System.out.println("model.Manufacturer name updated successfully.");
+        System.out.println("model.Manufacturer country updated successfully.");
       } else {
         System.out.println("No manufacturer found with the specified ID.");
       }
@@ -213,7 +196,7 @@ public class DatabaseConnector
       statement.setInt(2, id);
       int rowsUpdated = statement.executeUpdate();
       if (rowsUpdated > 0) {
-        System.out.println("model.Manufacturer name updated successfully.");
+        System.out.println("model.Manufacturer phone updated successfully.");
       } else {
         System.out.println("No manufacturer found with the specified ID.");
       }
@@ -234,7 +217,7 @@ public class DatabaseConnector
       statement.setInt(2, id);
       int rowsUpdated = statement.executeUpdate();
       if (rowsUpdated > 0) {
-        System.out.println("model.Manufacturer name updated successfully.");
+        System.out.println("model.Manufacturer e-mail updated successfully.");
       } else {
         System.out.println("No manufacturer found with the specified ID.");
       }
@@ -246,17 +229,7 @@ public class DatabaseConnector
     }
 
   }
-  public void deleteManufacturer(int id) {
-    String sql = "DELETE FROM solarpanels.Manufacturer WHERE manufacturer_id = " + id + ";";
 
-    try {
-      Statement statement = connection.createStatement();
-      statement.execute(sql);
-    } catch (SQLException e) {
-      System.out.println("Error trying to delete a manufacturer from Manufacturer table");
-      e.printStackTrace();
-    }
-  }
   public ObservableList<Manufacturer> searchByID(int id) {
     ObservableList<Manufacturer> result = FXCollections.observableArrayList();
     String sql = "SELECT manufacturer_ID, name, country, phone, email FROM solarpanels.Manufacturer WHERE manufacturer_id = " + id + ";";
@@ -278,7 +251,7 @@ public class DatabaseConnector
   }
   public ObservableList<Manufacturer> searchByName(String name) {
     ObservableList<Manufacturer> result = FXCollections.observableArrayList();
-    String sql = "SELECT manufacturer_ID, name, country, phone, email FROM solarpanels.Manufacturer WHERE name = '" + name + "';";
+    String sql = "SELECT manufacturer_ID, name, country, phone, email FROM solarpanels.Manufacturer WHERE name ILIKE '%" + name + "%';";
 
     try {
       Statement statement = connection.createStatement();
@@ -297,7 +270,7 @@ public class DatabaseConnector
   }
   public ObservableList<Manufacturer> searchByCountry(String country) {
     ObservableList<Manufacturer> result = FXCollections.observableArrayList();
-    String sql = "SELECT manufacturer_ID, name, country, phone, email FROM solarpanels.Manufacturer WHERE country = '" + country + "';";
+    String sql = "SELECT manufacturer_ID, name, country, phone, email FROM solarpanels.Manufacturer WHERE country ILIKE '" + country + "';";
 
     try {
       Statement statement = connection.createStatement();
@@ -316,7 +289,7 @@ public class DatabaseConnector
   }
   public ObservableList<Manufacturer> searchByPhone(String phone) {
     ObservableList<Manufacturer> result = FXCollections.observableArrayList();
-    String sql = "SELECT manufacturer_ID, name, country, phone, email FROM solarpanels.Manufacturer WHERE phone = '" + phone + "';";
+    String sql = "SELECT manufacturer_ID, name, country, phone, email FROM solarpanels.Manufacturer WHERE phone ILIKE '%" + phone + "%';";
 
     try {
       Statement statement = connection.createStatement();
@@ -335,7 +308,7 @@ public class DatabaseConnector
   }
   public ObservableList<Manufacturer> searchByEmail(String email) {
     ObservableList<Manufacturer> result = FXCollections.observableArrayList();
-    String sql = "SELECT manufacturer_ID, name, country, phone, email FROM solarpanels.Manufacturer WHERE email = '" + email + "';";
+    String sql = "SELECT manufacturer_ID, name, country, phone, email FROM solarpanels.Manufacturer WHERE email ILIKE '%" + email + "%';";
 
     try {
       Statement statement = connection.createStatement();
@@ -351,5 +324,127 @@ public class DatabaseConnector
       e.printStackTrace();
     }
     return result;
+  }
+  public ObservableList<PVPanels> filterByDate(LocalDate initialDate, LocalDate finalDate) {
+    ObservableList<PVPanels> result = FXCollections.observableArrayList();
+    String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, voltage, current, solar_flux, power_out, efficiency FROM solarpanels.measure_pv WHERE timestamp::date >= '" + initialDate + "' AND timestamp::date <= '" + finalDate + "';";
+
+    try {
+      Statement statement = connection.createStatement();
+      ResultSet resultSet = statement.executeQuery(sql); // use the executeQuery() function when a result is expected
+
+      while (resultSet.next()) { // Goes to the next row of data if available
+        PVPanels pvpanels = new PVPanels(resultSet.getDate(1),resultSet.getTime(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getFloat(5), resultSet.getFloat(6), resultSet.getInt(7), resultSet.getFloat(8), resultSet.getFloat(9));
+        result.add(pvpanels);
+      }
+
+    } catch (SQLException e) {
+      System.out.println("Error trying to filter by date");
+      e.printStackTrace();
+    }
+    return result;
+  }
+//  public ObservableList<PVPanels> retrievePVPanel(Location location)
+//  {
+//    ObservableList<PVPanels> result = FXCollections.observableArrayList();
+//    String sql =
+//        "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, voltage, current, solar_flux, power_out, efficiency FROM solarpanels.measure_pv WHERE panel_id = (Select panel_ID from solarpanels.Panel WHERE row = "
+//            + location.getRow() + " AND \"column\" = " + location.getColumn() + ");";
+//
+//    try
+//    {
+//      Statement statement = connection.createStatement();
+//      ResultSet resultSet = statement.executeQuery(sql); // use the executeQuery() function when a result is expected
+//
+//      while (resultSet.next()) { // Goes to the next row of data if available
+//      PVPanels pvpanels = new PVPanels(resultSet.getDate(1),resultSet.getTime(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getFloat(5), resultSet.getFloat(6), resultSet.getInt(7), resultSet.getFloat(8), resultSet.getFloat(9));
+//      result.add(pvpanels);
+//    }
+//    }
+//    catch (SQLException e)
+//    {
+//      System.out.println("Error trying to generate table of pvpanels");
+//      e.printStackTrace();
+//    }
+//
+//    return result;
+//  }
+public PVPanels retrievePVPanel(Location location)
+{
+  PVPanels pvPanels = null;
+  String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, voltage, current, solar_flux, power_out, efficiency FROM solarpanels.measure_pv WHERE panel_id = (Select panel_ID from solarpanels.Panel WHERE row = ? AND \"column\" = ?);";
+
+  try (PreparedStatement statement = connection.prepareStatement(sql)) {
+    statement.setInt(1, location.getRow());
+    statement.setInt(2, location.getColumn());
+    ResultSet resultSet = statement.executeQuery();
+
+    //while if i want all of them not the first only
+    if (resultSet.next()) {
+      Date date = resultSet.getDate("date");
+      Time time = resultSet.getTime("time");
+      int panel_id = resultSet.getInt("panel_id");
+      float voltage = resultSet.getFloat("voltage");
+      float current = resultSet.getFloat("current");
+      int solarFlux = resultSet.getInt("solar_flux");
+      float powerOut = resultSet.getFloat("power_out");
+      float efficiency = resultSet.getFloat("efficiency");
+
+      pvPanels = new PVPanels(date, time, panel_id, voltage, current, solarFlux, powerOut, efficiency);
+    }
+  } catch (SQLException e) {
+    System.out.println("Error retrieving performance data: " + e.getMessage());
+  }
+
+  return pvPanels;
+
+}
+  public ObservableList<THPanels> filterTHByDate(LocalDate initialDate, LocalDate finalDate) {
+    ObservableList<THPanels> result = FXCollections.observableArrayList();
+    String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, a_temperature, water_in_temp, water_out_temp, efficiency FROM solarpanels.measure_th WHERE timestamp::date >= '" + initialDate + "' AND timestamp::date <= '" + finalDate + "';";
+
+    try {
+      Statement statement = connection.createStatement();
+      ResultSet resultSet = statement.executeQuery(sql); // use the executeQuery() function when a result is expected
+
+      while (resultSet.next()) { // Goes to the next row of data if available
+        THPanels thPanels = new THPanels(resultSet.getDate(1),resultSet.getTime(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getFloat(5), resultSet.getFloat(6), resultSet.getFloat(7), resultSet.getFloat(8));
+        result.add(thPanels);
+      }
+
+    } catch (SQLException e) {
+      System.out.println("Error trying to filter by date");
+      e.printStackTrace();
+    }
+    return result;
+  }
+  public THPanels retrieveTHPanel(Location location)
+  {
+    THPanels thPanels = null;
+    String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, a_temperature, water_in_temp, water_out_temp, efficiency FROM solarpanels.measure_th WHERE panel_id = (Select panel_ID from solarpanels.Panel WHERE row = ? AND \"column\" = ?);";
+
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+      statement.setInt(1, location.getRow());
+      statement.setInt(2, location.getColumn());
+      ResultSet resultSet = statement.executeQuery();
+
+      //while if i want all of them not the first only
+      if (resultSet.next()) {
+        Date date = resultSet.getDate("date");
+        Time time = resultSet.getTime("time");
+        int panel_id = resultSet.getInt("panel_ID");
+        float a_temperature = resultSet.getFloat("a_temperature");
+        float water_in_temp = resultSet.getFloat("water_in_temp");
+        float water_out_temp = resultSet.getFloat("water_out_temp");
+        float efficiency = resultSet.getFloat("efficiency");
+
+        thPanels = new THPanels(date, time, panel_id, a_temperature, water_in_temp, water_out_temp, efficiency);
+      }
+    } catch (SQLException e) {
+      System.out.println("Error retrieving performance data: " + e.getMessage());
+    }
+
+    return thPanels;
+
   }
 }

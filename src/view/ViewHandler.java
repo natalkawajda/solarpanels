@@ -14,6 +14,8 @@ public class ViewHandler {
     private Scene thPanelsScene;
     private Scene panelsScene;
     private Scene manufacturerHistoryScene;
+    private Scene locationScene;
+    private LocationController locationController;
     private THPanelsController thPanelsController;
     private PanelsController panelsController;
     private PVPanelsController pvPanelsController;
@@ -26,6 +28,7 @@ public class ViewHandler {
     public static final String MANUFACTURER = "MANUFACTURER";
     public static final String PANELS = "PANELS";
     public static final String MANUFACTURER_HISTORY = "MANUFACTURER_HISTORY";
+    public static final String LOCATION = "LOCATION";
     private DatabaseConnector connection;
 
     public ViewHandler (Stage primaryStage,DatabaseConnector connection){
@@ -110,6 +113,19 @@ public class ViewHandler {
             System.out.println("Failed to load ManufacturerHistory.fxml");
             System.exit(1);
         }
+        loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("Location.fxml"));
+        try
+        {
+            locationScene = new Scene(loader.load());
+            locationController = loader.getController();
+            locationController.init(this);
+        }
+        catch (IOException e)
+        {
+            System.out.println("Failed to load Location.fxml");
+            System.exit(1);
+        }
         changeScene("MAIN_PAGE_SCENE");
     }
     public void changeScene(String sceneName)
@@ -155,6 +171,13 @@ public class ViewHandler {
             primaryStage.show();
             manufacturerHistoryController.updateView();
         }
+        else if (LOCATION.equals(sceneName))
+        {
+            primaryStage.setTitle("Location");
+            primaryStage.setScene(locationScene);
+            primaryStage.show();
+        }
+
     }
     public DatabaseConnector getConnection()
     {

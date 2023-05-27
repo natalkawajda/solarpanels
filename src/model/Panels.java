@@ -18,6 +18,10 @@ public class Panels {
     this.row = row;
     this.column = column;
   }
+  public Panels(int row, int column){
+    this.row = row;
+    this.column = column;
+  }
 
   public int getId() {
     return id;

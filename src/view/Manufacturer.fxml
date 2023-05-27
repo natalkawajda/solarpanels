@@ -74,10 +74,8 @@
             <Button layoutX="529.0" layoutY="50.0" mnemonicParsing="false" onAction="#handleChangeCountry" text="Change country" />
             <Button layoutX="529.0" layoutY="85.0" mnemonicParsing="false" onAction="#handleChangePhone" text="Change phone" />
             <Button layoutX="529.0" layoutY="121.0" mnemonicParsing="false" onAction="#handleChangeEmail" text="Change e-mail" />
-            <Button layoutX="529.0" layoutY="155.0" mnemonicParsing="false" onAction="#handleAddManufacturer" text="Add new manufacturer" />
-            <Button layoutX="528.0" layoutY="222.0" mnemonicParsing="false" onAction="#displayManufacturerHistory" text="Manufacturer history" />
-            <Button layoutX="529.0" layoutY="189.0" mnemonicParsing="false" onAction="#handleDeleteManufacturer" text="Delete manufacturer" />
-            <SplitMenuButton layoutX="527.0" layoutY="256.0" mnemonicParsing="false" text="Search by">
+            <Button layoutX="529.0" layoutY="154.0" mnemonicParsing="false" onAction="#displayManufacturerHistory" text="Manufacturer history" />
+            <SplitMenuButton layoutX="530.0" layoutY="190.0" mnemonicParsing="false" text="Search by">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#handleSearchByID" text="ID" />
                 <MenuItem mnemonicParsing="false" onAction="#handleSearchByName" text="Name" />
@@ -86,7 +84,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#handleSearchByEmail" text="E-mail" />
               </items>
             </SplitMenuButton>
-            <Button layoutX="528.0" layoutY="289.0" mnemonicParsing="false" onAction="#updateView" text="No filters" />
+            <Button layoutX="530.0" layoutY="225.0" mnemonicParsing="false" onAction="#updateView" text="No filters" />
             </children>
         </AnchorPane>
     </children>
