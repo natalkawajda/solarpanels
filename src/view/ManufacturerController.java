@@ -14,8 +14,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import model.Manufacturer;
+import org.postgresql.util.PSQLException;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class ManufacturerController {
@@ -37,6 +39,8 @@ public class ManufacturerController {
     public void init(ViewHandler viewHandler)
     {
         this.viewHandler = viewHandler;
+//        this.connection = new DatabaseConnector();
+//        connection.connect("balarama.db.elephantsql.com", 5432, "oodjpfdu", "OVr7iGfVftIao0lHjvnXthVvIDXdturJ");
     }
     public void updateView() {
         this.id.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -66,11 +70,21 @@ public class ManufacturerController {
             String name = String.valueOf(dialog1.getEditor().getText());
             if (name.equalsIgnoreCase(""))
             {
-                throw new Exception("You have to enter a name");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setAlertType(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Something went wrong");
+                alert.setContentText("You have to enter a name");
+                alert.showAndWait();
             }
             if (input == 0)
             {
-                throw new Exception("ID = 0 does not exist");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setAlertType(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Something went wrong");
+                alert.setContentText("ID = 0 does not exist");
+                alert.showAndWait();
             }
             viewHandler.getConnection().UpdateManufacturersName(name, input);
             viewHandler.changeScene(ViewHandler.MANUFACTURER);
@@ -83,7 +97,6 @@ public class ManufacturerController {
             alert.setContentText(l.getMessage());
             alert.showAndWait();
         }
-
 
     }
 
@@ -123,16 +136,24 @@ public class ManufacturerController {
 
     }
     public void handleChangePhone(ActionEvent e) {
-        try{
+//        viewHandler.getConnection().connect();
+        try
+        {
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Manufacturer ID");
-            dialog.setHeaderText("Type the ID of manufacturer you want to change phone number");
+            dialog.setHeaderText(
+                "Type the ID of manufacturer you want to change phone number");
             dialog.setContentText("ID:");
             dialog.showAndWait();
             int input1 = Integer.parseInt(String.valueOf(dialog.getEditor().getText()));
             if (input1 < 1 || input1 > 4)
             {
-                throw new Exception("Given ID does not exist");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setAlertType(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Something went wrong");
+                alert.setContentText("Given ID does not exist");
+                alert.showAndWait();
             }
             TextInputDialog dialog1 = new TextInputDialog();
             dialog1.setTitle("Change phone number");
@@ -142,13 +163,17 @@ public class ManufacturerController {
             String phone1 = String.valueOf(dialog1.getEditor().getText());
             if (phone1.equalsIgnoreCase(""))
             {
-                throw new Exception("You have to enter phone number");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setAlertType(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Something went wrong");
+                alert.setContentText("You have to enter phone number");
+                alert.showAndWait();
             }
             viewHandler.getConnection().UpdateManufacturersPhone(phone1, input1);
             viewHandler.changeScene(ViewHandler.MANUFACTURER);
-        }
-        catch (Exception l)
-        {
+            //            viewHandler.getConnection().close();
+        }catch (Exception l){
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setAlertType(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -182,6 +207,7 @@ public class ManufacturerController {
             }
             viewHandler.getConnection().UpdateManufacturersEmail(email, input);
             viewHandler.changeScene(ViewHandler.MANUFACTURER);
+//            viewHandler.getConnection().close();
         }catch (Exception l)
         {
             Alert alert = new Alert(Alert.AlertType.ERROR);

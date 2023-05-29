@@ -60,6 +60,7 @@
             <Button layoutX="106.0" layoutY="94.0" mnemonicParsing="false" onAction="#handlePanels" text="Panels" />
             <Button layoutX="109.0" layoutY="189.0" mnemonicParsing="false" onAction="#handleThPanels" text="Thermo measurments" />
             <Button layoutX="109.0" layoutY="238.0" mnemonicParsing="false" onAction="#handlePvPanels" text="Photovoltaic measurements" />
+            <Button layoutX="558.0" layoutY="349.0" mnemonicParsing="false" onAction="#closeButton" text="Close" />
       </children>
     </AnchorPane>
   </children>

@@ -9,8 +9,12 @@ public class Main extends Application {
   public void start (Stage primaryStage)
   {
     connection = new DatabaseConnector();
-    connection.connect("localhost", 5432, "postgres", "Olszyna12");
+    connection.connect("balarama.db.elephantsql.com", 5432, "oodjpfdu", "OVr7iGfVftIao0lHjvnXthVvIDXdturJ");
     viewHandler = new ViewHandler(primaryStage, connection);
+//    PVMeasurementsGenerator pvMeasurementsGenerator = new PVMeasurementsGenerator(connection);
+//    pvMeasurementsGenerator.start();
+//    THMeasurementsGenerator thMeasurementsGenerator = new THMeasurementsGenerator(connection);
+//    thMeasurementsGenerator.start();
   }
 
 

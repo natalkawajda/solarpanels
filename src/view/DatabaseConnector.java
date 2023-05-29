@@ -100,14 +100,14 @@ public class DatabaseConnector
   {
     ObservableList<PVPanels> result = FXCollections.observableArrayList();
 
-    String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, voltage, current, solar_flux, power_out, efficiency FROM solarpanels.measure_pv;";
+    String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, voltage, current, solar_flux, round(power_out, 2) as power_out, round(efficiency, 4) as efficiency FROM solarpanels.measure_pv order by measure_ID desc;";
 
     try {
       Statement statement = connection.createStatement();
       ResultSet resultSet = statement.executeQuery(sql); // use the executeQuery() function when a result is expected
 
       while (resultSet.next()) { // Goes to the next row of data if available
-        PVPanels pvpanels = new PVPanels(resultSet.getDate(1),resultSet.getTime(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getFloat(5), resultSet.getFloat(6), resultSet.getInt(7), resultSet.getFloat(8), resultSet.getFloat(9));
+        PVPanels pvpanels = new PVPanels(resultSet.getDate(1),resultSet.getTime(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getDouble(5), resultSet.getDouble(6), resultSet.getInt(7), resultSet.getDouble(8), resultSet.getDouble(9));
         result.add(pvpanels);
       }
 
@@ -130,7 +130,7 @@ public class DatabaseConnector
       ResultSet resultSet = statement.executeQuery(sql); // use the executeQuery() function when a result is expected
 
       while (resultSet.next()) { // Goes to the next row of data if available
-        THPanels thpanels = new THPanels(resultSet.getDate(1),resultSet.getTime(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getFloat(5), resultSet.getFloat(6), resultSet.getFloat(7), resultSet.getFloat(8));
+        THPanels thpanels = new THPanels(resultSet.getDate(1),resultSet.getTime(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getDouble(5), resultSet.getDouble(6), resultSet.getDouble(7), resultSet.getDouble(8));
         result.add(thpanels);
       }
 
@@ -372,7 +372,7 @@ public class DatabaseConnector
 public PVPanels retrievePVPanel(Location location)
 {
   PVPanels pvPanels = null;
-  String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, voltage, current, solar_flux, power_out, efficiency FROM solarpanels.measure_pv WHERE panel_id = (Select panel_ID from solarpanels.Panel WHERE row = ? AND \"column\" = ?);";
+  String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, voltage, current, solar_flux, power_out, efficiency FROM solarpanels.measure_pv WHERE panel_id = (Select panel_ID from solarpanels.Panel WHERE row = ? AND \"column\" = ?) order by timestamp desc;";
 
   try (PreparedStatement statement = connection.prepareStatement(sql)) {
     statement.setInt(1, location.getRow());
@@ -446,5 +446,64 @@ public PVPanels retrievePVPanel(Location location)
 
     return thPanels;
 
+  }
+  public void storePVMeasurements(PVPanels pvPanels) {
+    String sql = "INSERT INTO solarpanels.measure_pv (timestamp, panel_ID, voltage, current, solar_flux, power_out, efficiency) VALUES ('" + pvPanels.getTimestamp() + "', " + pvPanels.getPanel_id() + ", " + pvPanels.getVoltage() + ", " + pvPanels.getCurrent() + ", " + pvPanels.getSolar_flux() + ", " + pvPanels.getPower_out() + ", " + pvPanels.getEfficiency() + ");";
+
+    try {
+      Statement statement = connection.createStatement();
+      statement.execute(sql);
+    } catch (SQLException e) {
+      System.out.println("Error trying to insert a new measurement in measure_pv table");
+      e.printStackTrace();
+    }
+  }
+  public void storeTHMeasurements(THPanels thPanels) {
+    String sql = "INSERT INTO solarpanels.measure_th (timestamp, panel_ID, a_temperature,water_in_temp,water_out_temp,efficiency) VALUES ('" + thPanels.getTimestamp() + "', " + thPanels.getPanel_id() + ", " + thPanels.getA_temperature() + ", " + thPanels.getWater_in_temp() + ", " + thPanels.getWater_out_temp() + ", " + thPanels.getEfficiency() + ");";
+
+    try {
+      Statement statement = connection.createStatement();
+      statement.execute(sql);
+    } catch (SQLException e) {
+      System.out.println("Error trying to insert a new measurement in measure_th table");
+      e.printStackTrace();
+    }
+  }
+  public void generatePVMeasurements(PVPanels pvPanels) {
+    String sql = "INSERT INTO solarpanels.measure_pv (timestamp, panel_ID, voltage, current, solar_flux, power_out, efficiency) VALUES ('" + convertToSqlTimestamp(pvPanels.getDate()) + "', " + pvPanels.getPanel_id() + ", " + pvPanels.getVoltage() + ", " + pvPanels.getCurrent() + ", " + pvPanels.getSolar_flux() + ", " + pvPanels.getPower_out() + ", " + pvPanels.getEfficiency() + ");";
+
+    try {
+      Statement statement = connection.createStatement();
+      statement.execute(sql);
+    } catch (SQLException e) {
+      System.out.println("Error trying to insert a new measurement in measure_pv table");
+      e.printStackTrace();
+    }
+  }
+  public void generateTHMeasurements(THPanels thPanels) {
+    String sql = "INSERT INTO solarpanels.measure_th (timestamp, panel_ID, a_temperature,water_in_temp,water_out_temp,efficiency) VALUES ('" + convertToSqlTimestamp(thPanels.getDate()) + "', " + thPanels.getPanel_id() + ", " + thPanels.getA_temperature() + ", " + thPanels.getWater_in_temp() + ", " + thPanels.getWater_out_temp() + ", " + thPanels.getEfficiency() + ");";
+
+    try {
+      Statement statement = connection.createStatement();
+      statement.execute(sql);
+    } catch (SQLException e) {
+      System.out.println("Error trying to insert a new measurement in measure_pv table");
+      e.printStackTrace();
+    }
+  }
+  private Timestamp convertToSqlTimestamp(java.util.Date uDate) {
+    Timestamp timestamp = new Timestamp(uDate.getTime());
+    return timestamp;
+  }
+  public void close() {
+    // Close the connection
+    try {
+      connection.close();
+      System.out.println("Connection closed");
+      System.exit(2);
+    } catch (SQLException exception) {
+      System.out.println("Connection closing failed");
+      exception.printStackTrace();
+    }
   }
 }

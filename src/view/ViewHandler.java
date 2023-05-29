@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class ViewHandler {
+
     private Stage primaryStage;
     private Scene mainPageScene;
     private Scene manufacturerScene;
@@ -30,10 +31,14 @@ public class ViewHandler {
     public static final String MANUFACTURER_HISTORY = "MANUFACTURER_HISTORY";
     public static final String LOCATION = "LOCATION";
     private DatabaseConnector connection;
+    private PVMeasurementsData pvMeasurementsData;
+    private THMeasurementsData thMeasurementsData;
 
     public ViewHandler (Stage primaryStage,DatabaseConnector connection){
         this.primaryStage = primaryStage;
         this.connection = connection;
+        this.pvMeasurementsData = new PVMeasurementsData(connection);
+        this.thMeasurementsData = new THMeasurementsData(connection);
 
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("MainPage.fxml"));
@@ -42,6 +47,8 @@ public class ViewHandler {
             mainPageScene = new Scene(loader.load());
             mainPageController = loader.getController();
             mainPageController.init(this);
+//            pvMeasurementsData.generateData();
+//            thMeasurementsData.generateData();
         }
         catch (IOException e)
         {

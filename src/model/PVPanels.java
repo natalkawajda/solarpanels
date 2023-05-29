@@ -1,19 +1,32 @@
 package model;
 import java.sql.*;
+import java.util.Date;
 
 public class PVPanels
 {
+  private String timestamp;
   private Date date;
   private Time time;
   private int id;
   private int panel_id;
-  private float voltage;
-  private float current;
+  private double voltage;
+  private double current;
   private int solar_flux;
-  private float power_out;
-  private float efficiency;
+  private double power_out;
+  private double efficiency;
 
-  public PVPanels(Date date, Time time, int id, int panel_id, float voltage, float current, int solar_flux, float power_out, float efficiency){
+  public PVPanels(Date date, Time time, int id, int panel_id, double voltage, double current, int solar_flux, double power_out, double efficiency){
+    this.date = date;
+    this.time = time;
+    this.id = id;
+    this.panel_id = panel_id;
+    this.voltage = voltage;
+    this.current = current;
+    this.solar_flux = solar_flux;
+    this.power_out = power_out;
+    this.efficiency = efficiency;
+  }
+  public PVPanels(Date date, Time time, int panel_id, double voltage, double current, int solar_flux, double power_out, double efficiency){
     this.date = date;
     this.time = time;
     this.panel_id = panel_id;
@@ -23,9 +36,17 @@ public class PVPanels
     this.power_out = power_out;
     this.efficiency = efficiency;
   }
-  public PVPanels(Date date, Time time, int panel_id, float voltage, float current, int solar_flux, float power_out, float efficiency){
+  public PVPanels(String timestamp, int panel_id, double voltage, double current, int solar_flux, double power_out, double efficiency){
+    this.timestamp = timestamp;
+    this.panel_id = panel_id;
+    this.voltage = voltage;
+    this.current = current;
+    this.solar_flux = solar_flux;
+    this.power_out = power_out;
+    this.efficiency = efficiency;
+  }
+  public PVPanels(Date date, int panel_id, double voltage, double current, int solar_flux, double power_out, double efficiency){
     this.date = date;
-    this.time = time;
     this.panel_id = panel_id;
     this.voltage = voltage;
     this.current = current;
@@ -64,7 +85,7 @@ public class PVPanels
     this.panel_id = panel_id;
   }
 
-  public float getVoltage()
+  public double getVoltage()
   {
     return voltage;
   }
@@ -74,7 +95,7 @@ public class PVPanels
     this.voltage = voltage;
   }
 
-  public float getCurrent()
+  public double getCurrent()
   {
     return current;
   }
@@ -94,7 +115,7 @@ public class PVPanels
     this.solar_flux = solar_flux;
   }
 
-  public float getPower_out()
+  public double getPower_out()
   {
     return power_out;
   }
@@ -104,7 +125,7 @@ public class PVPanels
     this.power_out = power_out;
   }
 
-  public float getEfficiency()
+  public double getEfficiency()
   {
     return efficiency;
   }
@@ -122,5 +143,15 @@ public class PVPanels
   public void setTime(Time time)
   {
     this.time = time;
+  }
+
+  public String getTimestamp()
+  {
+    return timestamp;
+  }
+
+  public void setTimestamp(String timestamp)
+  {
+    this.timestamp = timestamp;
   }
 }

@@ -39,12 +39,13 @@ public class PVPanelsController {
     public void init(ViewHandler viewHandler)
     {
         this.viewHandler = viewHandler;
+
     }
     public void updateView() {
         //		System.out.println("view.AverageSpeedsController Update View called");
         date.setCellValueFactory(new PropertyValueFactory<>("date"));
         time.setCellValueFactory(new PropertyValueFactory<>("time"));
-        id.setCellValueFactory(new PropertyValueFactory<>("id"));
+        id.setCellValueFactory(new PropertyValueFactory<>("Id"));
         panel_id.setCellValueFactory(new PropertyValueFactory<>("panel_id"));
         voltage.setCellValueFactory(new PropertyValueFactory<>("voltage"));
         current.setCellValueFactory(new PropertyValueFactory<>("current"));
@@ -96,5 +97,8 @@ public class PVPanelsController {
         efficiency.setCellValueFactory(new PropertyValueFactory<>("efficiency"));
         pvPanelsTable.setItems(viewHandler.getConnection().filterByDate(initialDatePicker.getValue(),
             finalDatePicker.getValue()));
+    }
+    public void refresh(){
+        viewHandler.getConnection().retrievePVPanels();
     }
 }

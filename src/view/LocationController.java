@@ -21,15 +21,15 @@ public class LocationController
   {
     this.viewHandler = viewHandler;
   }
-  public void updateView(ActionEvent e){
+  public void seePV(ActionEvent e){
     Button clickedButton = (Button)e.getSource();
     int row = GridPane.getRowIndex(clickedButton);
     int column = GridPane.getColumnIndex(clickedButton);
     Location location = new Location(row, column);
     PVPanels pvPanels = viewHandler.getConnection().retrievePVPanel(location);
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle("Performance Data");
-    alert.setHeaderText("Performance data for the selected date interval");
+    alert.setTitle("Panel's data");
+    alert.setHeaderText("Performance data for the selected panel");
     alert.setContentText("Date:" + pvPanels.getDate() + "\n" +
         "Time:" + pvPanels.getTime() + "\n" +
         "Panel id:" + pvPanels.getPanel_id() + "\n" +
@@ -47,8 +47,8 @@ public class LocationController
     Location location = new Location(row, column);
     THPanels thPanels = viewHandler.getConnection().retrieveTHPanel(location);
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle("Performance Data");
-    alert.setHeaderText("Performance data for the selected date interval");
+    alert.setTitle("Panel's data");
+    alert.setHeaderText("Performance data for the selected panel");
     alert.setContentText("Date:" + thPanels.getDate() + "\n" +
         "Time:" + thPanels.getTime() + "\n" +
         "Panel id:" + thPanels.getPanel_id() + "\n" +
@@ -57,6 +57,9 @@ public class LocationController
         "Water out temperature: " + thPanels.getWater_out_temp() + "\n" +
         "Efficiency: " + thPanels.getEfficiency());
     alert.showAndWait();
+  }
+  public void handleGoBack(ActionEvent e) {
+    viewHandler.changeScene(ViewHandler.PANELS);
   }
 
 }
