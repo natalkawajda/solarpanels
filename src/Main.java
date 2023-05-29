@@ -8,13 +8,13 @@ public class Main extends Application {
   private DatabaseConnector connection;
   public void start (Stage primaryStage)
   {
-    connection = new DatabaseConnector();
-    connection.connect("balarama.db.elephantsql.com", 5432, "oodjpfdu", "OVr7iGfVftIao0lHjvnXthVvIDXdturJ");
+    connection = new DatabaseConnector("balarama.db.elephantsql.com", 5432, "oodjpfdu", "OVr7iGfVftIao0lHjvnXthVvIDXdturJ");
+    //connection.connect("balarama.db.elephantsql.com", 5432, "oodjpfdu", "OVr7iGfVftIao0lHjvnXthVvIDXdturJ");
     viewHandler = new ViewHandler(primaryStage, connection);
-//    PVMeasurementsGenerator pvMeasurementsGenerator = new PVMeasurementsGenerator(connection);
-//    pvMeasurementsGenerator.start();
-//    THMeasurementsGenerator thMeasurementsGenerator = new THMeasurementsGenerator(connection);
-//    thMeasurementsGenerator.start();
+    PVMeasurementsGenerator pvMeasurementsGenerator = new PVMeasurementsGenerator(connection);
+    pvMeasurementsGenerator.start();
+    THMeasurementsGenerator thMeasurementsGenerator = new THMeasurementsGenerator(connection);
+    thMeasurementsGenerator.start();
   }
 
 

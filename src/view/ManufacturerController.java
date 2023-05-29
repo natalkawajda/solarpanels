@@ -21,7 +21,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 public class ManufacturerController {
-    private DatabaseConnector connection = new DatabaseConnector();
+    //private DatabaseConnector connection = new DatabaseConnector();
     @FXML
     private TableView<Manufacturer> manufacturerTable;
     @FXML
@@ -170,7 +170,10 @@ public class ManufacturerController {
                 alert.setContentText("You have to enter phone number");
                 alert.showAndWait();
             }
-            viewHandler.getConnection().UpdateManufacturersPhone(phone1, input1);
+            String response = viewHandler.getConnection().UpdateManufacturersPhone(phone1, input1);
+            if(response.equalsIgnoreCase("Error trying to update model.Manufacturer table")){
+                //TODO utworzyc okienko
+            }
             viewHandler.changeScene(ViewHandler.MANUFACTURER);
             //            viewHandler.getConnection().close();
         }catch (Exception l){

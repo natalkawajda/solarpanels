@@ -1,4 +1,5 @@
 package view;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -6,12 +7,16 @@ import model.DateInterval;
 import model.PVPanels;
 import javafx.fxml.FXML;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
-
+import java.util.List;
 
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.event.ActionEvent;
+import model.THPanels;
 
 public class PVPanelsController {
     @FXML
@@ -97,8 +102,55 @@ public class PVPanelsController {
         efficiency.setCellValueFactory(new PropertyValueFactory<>("efficiency"));
         pvPanelsTable.setItems(viewHandler.getConnection().filterByDate(initialDatePicker.getValue(),
             finalDatePicker.getValue()));
+        ObservableList<PVPanels> filteredData = viewHandler.getConnection().filterByDate(initialDatePicker.getValue(), finalDatePicker.getValue());
+        savePerformanceDataAsReport(filteredData);
     }
     public void refresh(){
         viewHandler.getConnection().retrievePVPanels();
+    }
+    public void savePerformanceDataAsReport(List<PVPanels> performanceDataList) {
+        // Prepare the report content
+        StringBuilder reportBuilder = new StringBuilder();
+        reportBuilder.append("Performance Data Report\n\n");
+
+        for (PVPanels performanceDataPV : performanceDataList) {
+            reportBuilder.append("Date: ").append(performanceDataPV.getDate()).append("\n");
+            reportBuilder.append("Time: ").append(performanceDataPV.getTime()).append("\n");
+            reportBuilder.append("Measure id: ").append(performanceDataPV.getId()).append("\n");
+            reportBuilder.append("Panel id: ").append(performanceDataPV.getId()).append("\n");
+            reportBuilder.append("Voltage: ").append(performanceDataPV.getVoltage()).append("\n");
+            reportBuilder.append("Current: ").append(performanceDataPV.getCurrent()).append("\n");
+            reportBuilder.append("Solar flux: ").append(performanceDataPV.getSolar_flux()).append("\n");
+            reportBuilder.append("Power out: ").append(performanceDataPV.getPower_out()).append("\n");
+            reportBuilder.append("Efficiency: ").append(performanceDataPV.getEfficiency()).append("\n");
+            reportBuilder.append("\n");
+        }
+
+        // Define the file name and location
+        String fileName = "performance_report1.txt";
+        String filePath = "C:\\Users\\Wojtek Z Petworld\\Desktop\\jpjp\\" + fileName;
+
+        try {
+            // Create the file and write the report content
+            File file = new File(filePath);
+            FileWriter writer = new FileWriter(file);
+            writer.write(reportBuilder.toString());
+            writer.close();
+
+            System.out.println("Performance data report saved successfully.");
+
+        } catch (IOException e) {
+            System.out.println("Error occurred while saving the performance data report.");
+            e.printStackTrace();
+        }
+    }
+    public void help()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setAlertType(Alert.AlertType.INFORMATION);
+        alert.setTitle("Help");
+        alert.setHeaderText("Something went wrong");
+        alert.setContentText("You have to enter phone number");
+        alert.showAndWait();
     }
 }
