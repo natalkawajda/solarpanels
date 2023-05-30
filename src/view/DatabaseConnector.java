@@ -479,7 +479,7 @@ public class DatabaseConnector
   {
     ObservableList<PVPanels> result = FXCollections.observableArrayList();
     String sql =
-        "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, voltage, current, solar_flux, power_out, efficiency FROM solarpanels.measure_pv WHERE timestamp::date >= '"
+        "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, round(voltage, 2) as voltage, round(current, 2) as current, solar_flux, round(power_out, 2) as power_out, round(efficiency, 4) as efficiency FROM solarpanels.measure_pv WHERE timestamp::date >= '"
             + initialDate + "' AND timestamp::date <= '" + finalDate + "';";
 
     try (Connection connection = getConnection())
@@ -492,8 +492,8 @@ public class DatabaseConnector
       { // Goes to the next row of data if available
         PVPanels pvpanels = new PVPanels(resultSet.getDate(1),
             resultSet.getTime(2), resultSet.getInt(3), resultSet.getInt(4),
-            resultSet.getFloat(5), resultSet.getFloat(6), resultSet.getInt(7),
-            resultSet.getFloat(8), resultSet.getFloat(9));
+            resultSet.getDouble(5), resultSet.getDouble(6), resultSet.getInt(7),
+            resultSet.getDouble(8), resultSet.getDouble(9));
         result.add(pvpanels);
       }
 
@@ -550,7 +550,7 @@ public class DatabaseConnector
   {
     ObservableList<THPanels> result = FXCollections.observableArrayList();
     String sql =
-        "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, a_temperature, water_in_temp, water_out_temp, efficiency FROM solarpanels.measure_th WHERE timestamp::date >= '"
+        "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, round(a_temperature, 2) as a_temperature, round(water_in_temp, 2) as water_in_temp, round(water_out_temp, 2) as water_out_temp, round(efficiency, 2) as efficiency FROM solarpanels.measure_th WHERE timestamp::date >= '"
             + initialDate + "' AND timestamp::date <= '" + finalDate + "';";
 
     try (Connection connection = getConnection())
@@ -563,8 +563,8 @@ public class DatabaseConnector
       { // Goes to the next row of data if available
         THPanels thPanels = new THPanels(resultSet.getDate(1),
             resultSet.getTime(2), resultSet.getInt(3), resultSet.getInt(4),
-            resultSet.getFloat(5), resultSet.getFloat(6), resultSet.getFloat(7),
-            resultSet.getFloat(8));
+            resultSet.getDouble(5), resultSet.getDouble(6), resultSet.getDouble(7),
+            resultSet.getDouble(8));
         result.add(thPanels);
       }
 

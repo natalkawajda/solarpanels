@@ -10,9 +10,13 @@ import javafx.event.ActionEvent;
 import model.THPanels;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 
 public class LocationController
 {
+
+  private static final DecimalFormat df = new DecimalFormat("0.00");
+  private static final DecimalFormat df1 = new DecimalFormat("0.0000");
   @FXML
   private Button button;
   private ViewHandler viewHandler;
@@ -33,11 +37,11 @@ public class LocationController
     alert.setContentText("Date:" + pvPanels.getDate() + "\n" +
         "Time:" + pvPanels.getTime() + "\n" +
         "Panel id:" + pvPanels.getPanel_id() + "\n" +
-        "Voltage: " + pvPanels.getVoltage() + "\n" +
-        "Current: " + pvPanels.getCurrent() + "\n" +
+        "Voltage: " + df.format(pvPanels.getVoltage()) + "\n" +
+        "Current: " + df.format(pvPanels.getCurrent()) + "\n" +
         "Solar Flux: " + pvPanels.getSolar_flux() + "\n" +
-        "Power Output: " + pvPanels.getPower_out() + "\n" +
-        "Efficiency: " + pvPanels.getEfficiency());
+        "Power Output: " + df.format(pvPanels.getPower_out()) + "\n" +
+        "Efficiency: " + df1.format(pvPanels.getEfficiency()));
     alert.showAndWait();
   }
   public void seeTH(ActionEvent e){
@@ -52,10 +56,10 @@ public class LocationController
     alert.setContentText("Date:" + thPanels.getDate() + "\n" +
         "Time:" + thPanels.getTime() + "\n" +
         "Panel id:" + thPanels.getPanel_id() + "\n" +
-        "Ambient temperature: " + thPanels.getA_temperature() + "\n" +
-        "Water in temperature: " +thPanels.getWater_in_temp() + "\n" +
-        "Water out temperature: " + thPanels.getWater_out_temp() + "\n" +
-        "Efficiency: " + thPanels.getEfficiency());
+        "Ambient temperature: " + df.format(thPanels.getA_temperature()) + "\n" +
+        "Water in temperature: " + df.format(thPanels.getWater_in_temp()) + "\n" +
+        "Water out temperature: " + df.format(thPanels.getWater_out_temp()) + "\n" +
+        "Efficiency: " + df.format(thPanels.getEfficiency()));
     alert.showAndWait();
   }
   public void handleGoBack(ActionEvent e) {

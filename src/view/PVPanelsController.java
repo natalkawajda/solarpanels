@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,8 @@ import javafx.event.ActionEvent;
 import model.THPanels;
 
 public class PVPanelsController {
+    private static final DecimalFormat df = new DecimalFormat("0.00");
+    private static final DecimalFormat df1 = new DecimalFormat("0.0000");
     @FXML
     private TableView<PVPanels> pvPanelsTable;
     @FXML
@@ -129,11 +132,11 @@ public class PVPanelsController {
             reportBuilder.append("Time: ").append(performanceDataPV.getTime()).append("\n");
             reportBuilder.append("Measure id: ").append(performanceDataPV.getId()).append("\n");
             reportBuilder.append("Panel id: ").append(performanceDataPV.getId()).append("\n");
-            reportBuilder.append("Voltage: ").append(performanceDataPV.getVoltage()).append("\n");
-            reportBuilder.append("Current: ").append(performanceDataPV.getCurrent()).append("\n");
+            reportBuilder.append("Voltage: ").append(df.format(performanceDataPV.getVoltage())).append("\n");
+            reportBuilder.append("Current: ").append(df.format(performanceDataPV.getCurrent())).append("\n");
             reportBuilder.append("Solar flux: ").append(performanceDataPV.getSolar_flux()).append("\n");
-            reportBuilder.append("Power out: ").append(performanceDataPV.getPower_out()).append("\n");
-            reportBuilder.append("Efficiency: ").append(performanceDataPV.getEfficiency()).append("\n");
+            reportBuilder.append("Power out: ").append(df.format(performanceDataPV.getPower_out())).append("\n");
+            reportBuilder.append("Efficiency: ").append(df1.format(performanceDataPV.getEfficiency())).append("\n");
             reportBuilder.append("\n");
         }
 

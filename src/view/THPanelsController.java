@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,7 @@ import java.util.Optional;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class THPanelsController {
+    private static final DecimalFormat df = new DecimalFormat("0.00");
     @FXML
     private TableView<THPanels> thPanelsTable;
     @FXML
@@ -194,10 +196,10 @@ public void handleFiltering() {
             reportBuilder.append("Time: ").append(performanceDataTH.getTime()).append("\n");
             reportBuilder.append("Measure id: ").append(performanceDataTH.getId()).append("\n");
             reportBuilder.append("Panel id: ").append(performanceDataTH.getId()).append("\n");
-            reportBuilder.append("A_temperature: ").append(performanceDataTH.getA_temperature()).append("\n");
-            reportBuilder.append("Water_in_temp: ").append(performanceDataTH.getWater_in_temp()).append("\n");
-            reportBuilder.append("Water_out_temp: ").append(performanceDataTH.getWater_out_temp()).append("\n");
-            reportBuilder.append("Efficiency: ").append(performanceDataTH.getEfficiency()).append("\n");
+            reportBuilder.append("A_temperature: ").append(df.format(performanceDataTH.getA_temperature())).append("\n");
+            reportBuilder.append("Water_in_temp: ").append(df.format(performanceDataTH.getWater_in_temp())).append("\n");
+            reportBuilder.append("Water_out_temp: ").append(df.format(performanceDataTH.getWater_out_temp())).append("\n");
+            reportBuilder.append("Efficiency: ").append(df.format(performanceDataTH.getEfficiency())).append("\n");
             reportBuilder.append("\n");
         }
 
