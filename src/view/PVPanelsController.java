@@ -68,54 +68,71 @@ public class PVPanelsController {
         viewHandler.changeScene(ViewHandler.MAIN_PAGE_SCENE);
     }
     public void handleFiltering() {
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Select Date Interval");
-        dialog.setHeaderText("Please enter the initial and final dates to check performance.");
-
-        // Create the content layout
-        GridPane gridPane = new GridPane();
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(20, 150, 10, 10));
-
-        // Create the date pickers
-        DatePicker initialDatePicker = new DatePicker();
-        DatePicker finalDatePicker = new DatePicker();
-        initialDatePicker.setValue(LocalDate.now());
-        finalDatePicker.setValue(LocalDate.now());
-
-        // Add the components to the layout
-        gridPane.add(new javafx.scene.control.Label("Initial Date:"), 0, 0);
-        gridPane.add(initialDatePicker, 1, 0);
-        gridPane.add(new javafx.scene.control.Label("Final Date:"), 0, 1);
-        gridPane.add(finalDatePicker, 1, 1);
-
-        // Set the content of the dialog
-        dialog.getDialogPane().setContent(gridPane);
-
-        // Set the buttons
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-        Optional<ButtonType> result = dialog.showAndWait();
-
-        if (result.isPresent() && result.get() == ButtonType.OK)
+        try
         {
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setTitle("Select Date Interval");
+            dialog.setHeaderText(
+                "Please enter the initial and final dates to check performance.");
 
-            //		System.out.println("view.AverageSpeedsController Update View called");
-            date.setCellValueFactory(new PropertyValueFactory<>("date"));
-            time.setCellValueFactory(new PropertyValueFactory<>("time"));
-            id.setCellValueFactory(new PropertyValueFactory<>("id"));
-            panel_id.setCellValueFactory(new PropertyValueFactory<>("panel_id"));
-            voltage.setCellValueFactory(new PropertyValueFactory<>("voltage"));
-            current.setCellValueFactory(new PropertyValueFactory<>("current"));
-            solar_flux.setCellValueFactory(new PropertyValueFactory<>("solar_flux"));
-            power_out.setCellValueFactory(new PropertyValueFactory<>("power_out"));
-            efficiency.setCellValueFactory(new PropertyValueFactory<>("efficiency"));
-            pvPanelsTable.setItems(viewHandler.getConnection()
-                .filterByDate(initialDatePicker.getValue(), finalDatePicker.getValue()));
-            ObservableList<PVPanels> filteredData = viewHandler.getConnection()
-                .filterByDate(initialDatePicker.getValue(), finalDatePicker.getValue());
-            savePerformanceDataAsReport(filteredData);
+            // Create the content layout
+            GridPane gridPane = new GridPane();
+            gridPane.setHgap(10);
+            gridPane.setVgap(10);
+            gridPane.setPadding(new Insets(20, 150, 10, 10));
+
+            // Create the date pickers
+            DatePicker initialDatePicker = new DatePicker();
+            DatePicker finalDatePicker = new DatePicker();
+            initialDatePicker.setValue(LocalDate.now());
+            finalDatePicker.setValue(LocalDate.now());
+
+            // Add the components to the layout
+            gridPane.add(new javafx.scene.control.Label("Initial Date:"), 0, 0);
+            gridPane.add(initialDatePicker, 1, 0);
+            gridPane.add(new javafx.scene.control.Label("Final Date:"), 0, 1);
+            gridPane.add(finalDatePicker, 1, 1);
+
+            // Set the content of the dialog
+            dialog.getDialogPane().setContent(gridPane);
+
+            // Set the buttons
+            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+            Optional<ButtonType> result = dialog.showAndWait();
+
+            if (result.isPresent() && result.get() == ButtonType.OK)
+            {
+                if (finalDatePicker.getValue().isBefore(initialDatePicker.getValue()))
+                {
+                    throw new Exception("Final date cannot be before initial date");
+                }
+
+                //		System.out.println("view.AverageSpeedsController Update View called");
+                date.setCellValueFactory(new PropertyValueFactory<>("date"));
+                time.setCellValueFactory(new PropertyValueFactory<>("time"));
+                id.setCellValueFactory(new PropertyValueFactory<>("id"));
+                panel_id.setCellValueFactory(new PropertyValueFactory<>("panel_id"));
+                voltage.setCellValueFactory(new PropertyValueFactory<>("voltage"));
+                current.setCellValueFactory(new PropertyValueFactory<>("current"));
+                solar_flux.setCellValueFactory(new PropertyValueFactory<>("solar_flux"));
+                power_out.setCellValueFactory(new PropertyValueFactory<>("power_out"));
+                efficiency.setCellValueFactory(new PropertyValueFactory<>("efficiency"));
+                pvPanelsTable.setItems(viewHandler.getConnection()
+                    .filterByDate(initialDatePicker.getValue(), finalDatePicker.getValue()));
+                ObservableList<PVPanels> filteredData = viewHandler.getConnection()
+                    .filterByDate(initialDatePicker.getValue(), finalDatePicker.getValue());
+                savePerformanceDataAsReport(filteredData);
+            }
+        }catch (Exception l)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setAlertType(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Something went wrong");
+            alert.setContentText(
+                l.getMessage());
+            alert.showAndWait();
         }
 
     }

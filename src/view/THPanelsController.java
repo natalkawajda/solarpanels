@@ -102,89 +102,74 @@ public class THPanelsController {
 //            finalDatePicker.getValue()));
 //    }
 public void handleFiltering() {
-    Dialog<ButtonType> dialog = new Dialog<>();
-    dialog.setTitle("Select Date Interval");
-    dialog.setHeaderText("Please enter the initial and final dates to check performance.");
+        try
+        {
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setTitle("Select Date Interval");
+            dialog.setHeaderText(
+                "Please enter the initial and final dates to check performance.");
 
-    // Create the content layout
-    GridPane gridPane = new GridPane();
-    gridPane.setHgap(10);
-    gridPane.setVgap(10);
-    gridPane.setPadding(new Insets(20, 150, 10, 10));
+            // Create the content layout
+            GridPane gridPane = new GridPane();
+            gridPane.setHgap(10);
+            gridPane.setVgap(10);
+            gridPane.setPadding(new Insets(20, 150, 10, 10));
 
-    // Create the date pickers
-    DatePicker initialDatePicker = new DatePicker();
-    DatePicker finalDatePicker = new DatePicker();
-    initialDatePicker.setValue(LocalDate.now());
-    finalDatePicker.setValue(LocalDate.now());
+            // Create the date pickers
+            DatePicker initialDatePicker = new DatePicker();
+            DatePicker finalDatePicker = new DatePicker();
+            initialDatePicker.setValue(LocalDate.now());
+            finalDatePicker.setValue(LocalDate.now());
 
-    // Add the components to the layout
-    gridPane.add(new Label("Initial Date:"), 0, 0);
-    gridPane.add(initialDatePicker, 1, 0);
-    gridPane.add(new Label("Final Date:"), 0, 1);
-    gridPane.add(finalDatePicker, 1, 1);
+            // Add the components to the layout
+            gridPane.add(new Label("Initial Date:"), 0, 0);
+            gridPane.add(initialDatePicker, 1, 0);
+            gridPane.add(new Label("Final Date:"), 0, 1);
+            gridPane.add(finalDatePicker, 1, 1);
 
-    // Set the content of the dialog
-    dialog.getDialogPane().setContent(gridPane);
+            // Set the content of the dialog
+            dialog.getDialogPane().setContent(gridPane);
 
-    // Set the buttons
-    dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+            // Set the buttons
+            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-    Optional<ButtonType> result = dialog.showAndWait();
+            Optional<ButtonType> result = dialog.showAndWait();
 
-    if (result.isPresent() && result.get() == ButtonType.OK)
-    {
-        date.setCellValueFactory(new PropertyValueFactory<>("date"));
-        time.setCellValueFactory(new PropertyValueFactory<>("time"));
-        id.setCellValueFactory(new PropertyValueFactory<>("id"));
-        panel_id.setCellValueFactory(new PropertyValueFactory<>("panel_id"));
-        a_temperature.setCellValueFactory(new PropertyValueFactory<>("a_temperature"));
-        water_in_temp.setCellValueFactory(new PropertyValueFactory<>("water_in_temp"));
-        water_out_temp.setCellValueFactory(new PropertyValueFactory<>("water_out_temp"));
-        efficiency.setCellValueFactory(new PropertyValueFactory<>("efficiency"));
-        thPanelsTable.setItems(viewHandler.getConnection().filterTHByDate(initialDatePicker.getValue(),
-                finalDatePicker.getValue()));
+            if (result.isPresent() && result.get() == ButtonType.OK)
+            {
+                if (finalDatePicker.getValue().isBefore(initialDatePicker.getValue()))
+                {
+                    throw new Exception(
+                        "Final date cannot be before initial date");
+                }
+                date.setCellValueFactory(new PropertyValueFactory<>("date"));
+                time.setCellValueFactory(new PropertyValueFactory<>("time"));
+                id.setCellValueFactory(new PropertyValueFactory<>("id"));
+                panel_id.setCellValueFactory(new PropertyValueFactory<>("panel_id"));
+                a_temperature.setCellValueFactory(new PropertyValueFactory<>("a_temperature"));
+                water_in_temp.setCellValueFactory(new PropertyValueFactory<>("water_in_temp"));
+                water_out_temp.setCellValueFactory(new PropertyValueFactory<>("water_out_temp"));
+                efficiency.setCellValueFactory(new PropertyValueFactory<>("efficiency"));
+                thPanelsTable.setItems(viewHandler.getConnection().filterTHByDate(initialDatePicker.getValue(),
+                    finalDatePicker.getValue()));
 
-        // Filter the data and get the filtered list
-        ObservableList<THPanels> filteredData = viewHandler.getConnection()
-            .filterTHByDate(initialDatePicker.getValue(), finalDatePicker.getValue());
-        savePerformanceDataAsReport(filteredData);
-    }
+                // Filter the data and get the filtered list
+                ObservableList<THPanels> filteredData = viewHandler.getConnection()
+                    .filterTHByDate(initialDatePicker.getValue(),
+                        finalDatePicker.getValue());
+                savePerformanceDataAsReport(filteredData);
+            }
+        }catch (Exception l)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setAlertType(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Something went wrong");
+            alert.setContentText(
+                l.getMessage());
+            alert.showAndWait();
+        }
 
-    // Prepare the report content
-//    StringBuilder reportBuilder = new StringBuilder();
-//    reportBuilder.append("Filtered Performance Data Report\n\n");
-//
-//    for (THPanels performanceDataTH : filteredData) {
-//        reportBuilder.append("Date: ").append(performanceDataTH.getDate()).append("\n");
-//        reportBuilder.append("Time: ").append(performanceDataTH.getTime()).append("\n");
-//        reportBuilder.append("ID: ").append(performanceDataTH.getId()).append("\n");
-//        reportBuilder.append("Panel ID: ").append(performanceDataTH.getPanel_id()).append("\n");
-//        reportBuilder.append("A_temperature: ").append(performanceDataTH.getA_temperature()).append("\n");
-//        reportBuilder.append("Water_in_temp: ").append(performanceDataTH.getWater_in_temp()).append("\n");
-//        reportBuilder.append("Water_out_temp: ").append(performanceDataTH.getWater_out_temp()).append("\n");
-//        reportBuilder.append("Efficiency: ").append(performanceDataTH.getEfficiency()).append("\n");
-//        reportBuilder.append("\n");
-//    }
-//
-//    // Define the file name and location
-//    String fileName = "filtered_performance_report.txt";
-//
-//    String filePath = "C:\\Users\\Wojtek Z Petworld\\Desktop\\jpjp\\" + fileName;
-//
-//    try {
-//        // Create the file and write the report content
-//        File file = new File(filePath);
-//        FileWriter writer = new FileWriter(file);
-//        writer.write(reportBuilder.toString());
-//        writer.close();
-//
-//        System.out.println("Filtered performance data report saved successfully.");
-//
-//    } catch (IOException e) {
-//        System.out.println("Error occurred while saving the filtered performance data report.");
-//        e.printStackTrace();
-//    }
 }
     public void savePerformanceDataAsReport(List<THPanels> performanceDataList) {
         // Prepare the report content
