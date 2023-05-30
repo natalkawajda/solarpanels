@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.Date;
 
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.event.ActionEvent;
@@ -63,7 +65,7 @@ public class PVPanelsController {
         viewHandler.changeScene(ViewHandler.MAIN_PAGE_SCENE);
     }
     public void handleFiltering() {
-        Dialog<DateInterval> dialog = new Dialog<>();
+        Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Select Date Interval");
         dialog.setHeaderText("Please enter the initial and final dates to check performance.");
 
@@ -76,6 +78,8 @@ public class PVPanelsController {
         // Create the date pickers
         DatePicker initialDatePicker = new DatePicker();
         DatePicker finalDatePicker = new DatePicker();
+        initialDatePicker.setValue(LocalDate.now());
+        finalDatePicker.setValue(LocalDate.now());
 
         // Add the components to the layout
         gridPane.add(new javafx.scene.control.Label("Initial Date:"), 0, 0);
@@ -89,24 +93,31 @@ public class PVPanelsController {
         // Set the buttons
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        dialog.showAndWait();
-        //		System.out.println("view.AverageSpeedsController Update View called");
-        date.setCellValueFactory(new PropertyValueFactory<>("date"));
-        time.setCellValueFactory(new PropertyValueFactory<>("time"));
-        id.setCellValueFactory(new PropertyValueFactory<>("id"));
-        panel_id.setCellValueFactory(new PropertyValueFactory<>("panel_id"));
-        voltage.setCellValueFactory(new PropertyValueFactory<>("voltage"));
-        current.setCellValueFactory(new PropertyValueFactory<>("current"));
-        solar_flux.setCellValueFactory(new PropertyValueFactory<>("solar_flux"));
-        power_out.setCellValueFactory(new PropertyValueFactory<>("power_out"));
-        efficiency.setCellValueFactory(new PropertyValueFactory<>("efficiency"));
-        pvPanelsTable.setItems(viewHandler.getConnection().filterByDate(initialDatePicker.getValue(),
-            finalDatePicker.getValue()));
-        ObservableList<PVPanels> filteredData = viewHandler.getConnection().filterByDate(initialDatePicker.getValue(), finalDatePicker.getValue());
-        savePerformanceDataAsReport(filteredData);
+        Optional<ButtonType> result = dialog.showAndWait();
+
+        if (result.isPresent() && result.get() == ButtonType.OK)
+        {
+
+            //		System.out.println("view.AverageSpeedsController Update View called");
+            date.setCellValueFactory(new PropertyValueFactory<>("date"));
+            time.setCellValueFactory(new PropertyValueFactory<>("time"));
+            id.setCellValueFactory(new PropertyValueFactory<>("id"));
+            panel_id.setCellValueFactory(new PropertyValueFactory<>("panel_id"));
+            voltage.setCellValueFactory(new PropertyValueFactory<>("voltage"));
+            current.setCellValueFactory(new PropertyValueFactory<>("current"));
+            solar_flux.setCellValueFactory(new PropertyValueFactory<>("solar_flux"));
+            power_out.setCellValueFactory(new PropertyValueFactory<>("power_out"));
+            efficiency.setCellValueFactory(new PropertyValueFactory<>("efficiency"));
+            pvPanelsTable.setItems(viewHandler.getConnection()
+                .filterByDate(initialDatePicker.getValue(), finalDatePicker.getValue()));
+            ObservableList<PVPanels> filteredData = viewHandler.getConnection()
+                .filterByDate(initialDatePicker.getValue(), finalDatePicker.getValue());
+            savePerformanceDataAsReport(filteredData);
+        }
+
     }
     public void refresh(){
-        viewHandler.getConnection().retrievePVPanels();
+        viewHandler.changeScene(ViewHandler.PV_PANELS);
     }
     public void savePerformanceDataAsReport(List<PVPanels> performanceDataList) {
         // Prepare the report content
@@ -127,7 +138,7 @@ public class PVPanelsController {
         }
 
         // Define the file name and location
-        String fileName = "performance_report1.txt";
+        String fileName = "Photovoltaic panels performance report from " + performanceDataList.get(0).getDate() + " to " + performanceDataList.get(performanceDataList.size()-1).getDate() + ".txt";
         String filePath = "C:\\Users\\Wojtek Z Petworld\\Desktop\\jpjp\\" + fileName;
 
         try {
@@ -149,8 +160,8 @@ public class PVPanelsController {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setAlertType(Alert.AlertType.INFORMATION);
         alert.setTitle("Help");
-        alert.setHeaderText("Something went wrong");
-        alert.setContentText("You have to enter phone number");
+        alert.setHeaderText("Filter by date and generate report");
+        alert.setContentText("The 'Filter by date and generate report' button asks \nyou to choose the period and generates \nthe report in txt file.");
         alert.showAndWait();
     }
 }

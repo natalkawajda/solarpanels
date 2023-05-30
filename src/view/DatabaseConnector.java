@@ -147,7 +147,7 @@ public class DatabaseConnector
   {
     ObservableList<PVPanels> result = FXCollections.observableArrayList();
 
-    String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, voltage, current, solar_flux, round(power_out, 2) as power_out, round(efficiency, 4) as efficiency FROM solarpanels.measure_pv order by measure_ID desc;";
+    String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, round(voltage, 2) as voltage, round(current, 2) as current, solar_flux, round(power_out, 2) as power_out, round(efficiency, 4) as efficiency FROM solarpanels.measure_pv order by measure_ID desc;";
 
     try (Connection connection = getConnection())
     {
@@ -178,7 +178,7 @@ public class DatabaseConnector
   {
     ObservableList<THPanels> result = FXCollections.observableArrayList();
 
-    String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, a_temperature, water_in_temp, water_out_temp, efficiency FROM solarpanels.measure_th;";
+    String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, round(a_temperature, 2) as a_temperature, round(water_in_temp, 2) as water_in_temp, round(water_out_temp, 2) as water_out_temp, round(efficiency, 2) as efficiency FROM solarpanels.measure_th order by measure_ID desc;";
 
     try (Connection connection = getConnection())
     {
@@ -295,7 +295,7 @@ public class DatabaseConnector
     return "Phone number updated successfully";
   }
 
-  public void UpdateManufacturersEmail(String newEmail, int id)
+  public String UpdateManufacturersEmail(String newEmail, int id)
   {
     String sql = "UPDATE solarpanels.manufacturer SET email = ? WHERE manufacturer_id = ?;";
 
@@ -319,9 +319,9 @@ public class DatabaseConnector
     catch (SQLException e)
     {
       System.out.println("Error trying to update model.Manufacturer table");
-      e.printStackTrace();
+      return "Error trying to update model.Manufacturer table";
     }
-
+    return "E-mail updated successfully.";
   }
 
   public ObservableList<Manufacturer> searchByID(int id)
@@ -506,35 +506,11 @@ public class DatabaseConnector
     return result;
   }
 
-  //  public ObservableList<PVPanels> retrievePVPanel(Location location)
-  //  {
-  //    ObservableList<PVPanels> result = FXCollections.observableArrayList();
-  //    String sql =
-  //        "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, voltage, current, solar_flux, power_out, efficiency FROM solarpanels.measure_pv WHERE panel_id = (Select panel_ID from solarpanels.Panel WHERE row = "
-  //            + location.getRow() + " AND \"column\" = " + location.getColumn() + ");";
-  //
-  //    try
-  //    {
-  //      Statement statement = connection.createStatement();
-  //      ResultSet resultSet = statement.executeQuery(sql); // use the executeQuery() function when a result is expected
-  //
-  //      while (resultSet.next()) { // Goes to the next row of data if available
-  //      PVPanels pvpanels = new PVPanels(resultSet.getDate(1),resultSet.getTime(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getFloat(5), resultSet.getFloat(6), resultSet.getInt(7), resultSet.getFloat(8), resultSet.getFloat(9));
-  //      result.add(pvpanels);
-  //    }
-  //    }
-  //    catch (SQLException e)
-  //    {
-  //      System.out.println("Error trying to generate table of pvpanels");
-  //      e.printStackTrace();
-  //    }
-  //
-  //    return result;
-  //  }
+
   public PVPanels retrievePVPanel(Location location)
   {
     PVPanels pvPanels = null;
-    String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, voltage, current, solar_flux, power_out, efficiency FROM solarpanels.measure_pv WHERE panel_id = (Select panel_ID from solarpanels.Panel WHERE row = ? AND \"column\" = ?) order by timestamp desc;";
+    String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, round(voltage, 2) as voltage, round(current, 2) as current, solar_flux, round(power_out, 2) as power_out, round(efficiency, 4) as efficiency FROM solarpanels.measure_pv WHERE panel_id = (Select panel_ID from solarpanels.Panel WHERE row = ? AND \"column\" = ?) order by timestamp desc;";
 
     try (Connection connection = getConnection())
     {
@@ -549,11 +525,11 @@ public class DatabaseConnector
         Date date = resultSet.getDate("date");
         Time time = resultSet.getTime("time");
         int panel_id = resultSet.getInt("panel_id");
-        float voltage = resultSet.getFloat("voltage");
-        float current = resultSet.getFloat("current");
+        double voltage = resultSet.getFloat("voltage");
+        double current = resultSet.getFloat("current");
         int solarFlux = resultSet.getInt("solar_flux");
-        float powerOut = resultSet.getFloat("power_out");
-        float efficiency = resultSet.getFloat("efficiency");
+        double powerOut = resultSet.getFloat("power_out");
+        double efficiency = resultSet.getFloat("efficiency");
 
         pvPanels = new PVPanels(date, time, panel_id, voltage, current,
             solarFlux, powerOut, efficiency);
@@ -604,7 +580,7 @@ public class DatabaseConnector
   public THPanels retrieveTHPanel(Location location)
   {
     THPanels thPanels = null;
-    String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, a_temperature, water_in_temp, water_out_temp, efficiency FROM solarpanels.measure_th WHERE panel_id = (Select panel_ID from solarpanels.Panel WHERE row = ? AND \"column\" = ?);";
+    String sql = "select timestamp::date as date, timestamp::time as time, measure_ID, panel_ID, round(a_temperature, 2) as a_temperature, round(water_in_temp, 2) as water_in_temp, round(water_out_temp, 2) as water_out_temp, round(efficiency, 2) as efficiency FROM solarpanels.measure_th WHERE panel_id = (Select panel_ID from solarpanels.Panel WHERE row = ? AND \"column\" = ?) order by timestamp desc;";
 
     try (Connection connection = getConnection())
     {
@@ -619,10 +595,10 @@ public class DatabaseConnector
         Date date = resultSet.getDate("date");
         Time time = resultSet.getTime("time");
         int panel_id = resultSet.getInt("panel_ID");
-        float a_temperature = resultSet.getFloat("a_temperature");
-        float water_in_temp = resultSet.getFloat("water_in_temp");
-        float water_out_temp = resultSet.getFloat("water_out_temp");
-        float efficiency = resultSet.getFloat("efficiency");
+        double a_temperature = resultSet.getFloat("a_temperature");
+        double water_in_temp = resultSet.getFloat("water_in_temp");
+        double water_out_temp = resultSet.getFloat("water_out_temp");
+        double efficiency = resultSet.getFloat("efficiency");
 
         thPanels = new THPanels(date, time, panel_id, a_temperature,
             water_in_temp, water_out_temp, efficiency);
@@ -732,19 +708,10 @@ public class DatabaseConnector
     return timestamp;
   }
 
-//    public void close()
-//    {
-//      // Close the connection
-//      try
-//      {
-//        connection.close();
-//        System.out.println("Connection closed");
-//        System.exit(2);
-//      }
-//      catch (SQLException exception)
-//      {
-//        System.out.println("Connection closing failed");
-//        exception.printStackTrace();
-//      }
-//    }
+    public void close()
+    {
+      // Close the connection
+
+        System.exit(2);
+    }
 }

@@ -22,6 +22,6 @@ public class MainPageController {
         viewHandler.changeScene((ViewHandler.PANELS));
     }
     public void closeButton(ActionEvent e) {
-        //viewHandler.getConnection().close();
+        viewHandler.getConnection().close();
     }
 }

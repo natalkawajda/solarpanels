@@ -13,7 +13,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import javafx.scene.control.cell.PropertyValueFactory;
 
@@ -98,7 +100,7 @@ public class THPanelsController {
 //            finalDatePicker.getValue()));
 //    }
 public void handleFiltering() {
-    Dialog<DateInterval> dialog = new Dialog<>();
+    Dialog<ButtonType> dialog = new Dialog<>();
     dialog.setTitle("Select Date Interval");
     dialog.setHeaderText("Please enter the initial and final dates to check performance.");
 
@@ -111,6 +113,8 @@ public void handleFiltering() {
     // Create the date pickers
     DatePicker initialDatePicker = new DatePicker();
     DatePicker finalDatePicker = new DatePicker();
+    initialDatePicker.setValue(LocalDate.now());
+    finalDatePicker.setValue(LocalDate.now());
 
     // Add the components to the layout
     gridPane.add(new Label("Initial Date:"), 0, 0);
@@ -124,21 +128,26 @@ public void handleFiltering() {
     // Set the buttons
     dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-    dialog.showAndWait();
-            date.setCellValueFactory(new PropertyValueFactory<>("date"));
-            time.setCellValueFactory(new PropertyValueFactory<>("time"));
-            id.setCellValueFactory(new PropertyValueFactory<>("id"));
-            panel_id.setCellValueFactory(new PropertyValueFactory<>("panel_id"));
-            a_temperature.setCellValueFactory(new PropertyValueFactory<>("a_temperature"));
-            water_in_temp.setCellValueFactory(new PropertyValueFactory<>("water_in_temp"));
-            water_out_temp.setCellValueFactory(new PropertyValueFactory<>("water_out_temp"));
-            efficiency.setCellValueFactory(new PropertyValueFactory<>("efficiency"));
-            thPanelsTable.setItems(viewHandler.getConnection().filterTHByDate(initialDatePicker.getValue(),
+    Optional<ButtonType> result = dialog.showAndWait();
+
+    if (result.isPresent() && result.get() == ButtonType.OK)
+    {
+        date.setCellValueFactory(new PropertyValueFactory<>("date"));
+        time.setCellValueFactory(new PropertyValueFactory<>("time"));
+        id.setCellValueFactory(new PropertyValueFactory<>("id"));
+        panel_id.setCellValueFactory(new PropertyValueFactory<>("panel_id"));
+        a_temperature.setCellValueFactory(new PropertyValueFactory<>("a_temperature"));
+        water_in_temp.setCellValueFactory(new PropertyValueFactory<>("water_in_temp"));
+        water_out_temp.setCellValueFactory(new PropertyValueFactory<>("water_out_temp"));
+        efficiency.setCellValueFactory(new PropertyValueFactory<>("efficiency"));
+        thPanelsTable.setItems(viewHandler.getConnection().filterTHByDate(initialDatePicker.getValue(),
                 finalDatePicker.getValue()));
 
-    // Filter the data and get the filtered list
-    ObservableList<THPanels> filteredData = viewHandler.getConnection().filterTHByDate(initialDatePicker.getValue(), finalDatePicker.getValue());
-    savePerformanceDataAsReport(filteredData);
+        // Filter the data and get the filtered list
+        ObservableList<THPanels> filteredData = viewHandler.getConnection()
+            .filterTHByDate(initialDatePicker.getValue(), finalDatePicker.getValue());
+        savePerformanceDataAsReport(filteredData);
+    }
 
     // Prepare the report content
 //    StringBuilder reportBuilder = new StringBuilder();
@@ -193,7 +202,7 @@ public void handleFiltering() {
         }
 
         // Define the file name and location
-        String fileName = "performance_report.txt";
+        String fileName = "Thermal panels performance report from " + performanceDataList.get(0).getDate() + " to " + performanceDataList.get(performanceDataList.size()-1).getDate() + ".txt";
         String filePath = "C:\\Users\\Wojtek Z Petworld\\Desktop\\jpjp\\" + fileName;
 
         try {
@@ -209,6 +218,18 @@ public void handleFiltering() {
             System.out.println("Error occurred while saving the performance data report.");
             e.printStackTrace();
         }
+    }
+    public void refresh(){
+        viewHandler.changeScene(ViewHandler.TH_PANELS);
+    }
+    public void help()
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setAlertType(Alert.AlertType.INFORMATION);
+        alert.setTitle("Help");
+        alert.setHeaderText("Filter by date and generate report");
+        alert.setContentText("The 'Filter by date and generate report' button asks \nyou to choose the period and generates \nthe report in txt file.");
+        alert.showAndWait();
     }
 
 }
